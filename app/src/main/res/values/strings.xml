@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">pickUp</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="signup">signup</string>
+    <string name="login">Login</string>
 </resources>
