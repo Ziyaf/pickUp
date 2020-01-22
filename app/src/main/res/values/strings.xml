@@ -5,4 +5,6 @@
     <string name="signup">signup</string>
     <string name="login">Login</string>
     <string name="title_activity_driver_map">Map</string>
+    <string name="MAPApi">AIzaSyCg0Wkj_WG5cvhO0WENsX4VuNZCSUUXB-E</string>
+    <string name="title_activity_maps">Map</string>
 </resources>
