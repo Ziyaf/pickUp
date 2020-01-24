@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -25,6 +27,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class DriverMapActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -48,15 +53,10 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_map);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
         getLocationPermision();
 
-
     }
-    //Getting Map Permisions and Checking it//
+//Getting Map Permisions and Checking it//
     private void getLocationPermision() {
         Log.d(TAG, "getLocationPermission: getting location permissions");
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
@@ -68,6 +68,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                     COURSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 mLocationPermissionsGranted = true;
                 initMap();
+// if somethisng is not right region
             } else {
                 ActivityCompat.requestPermissions(this,
                         permissions,
@@ -147,6 +148,12 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                             moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
                                     DEFAULT_ZOOM,
                                     "My Location");
+                            // Sending location to Database using geofire
+
+                            String UserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("DriverAvailable");
+                            GeoFire geofire = new GeoFire(ref);
+                            geofire.setLocation(UserId, new GeoLocation(currentLocation.getLatitude(),currentLocation.getLongitude()));
 
                         }else{
                             Log.d(TAG, "onComplete: current location is null");
@@ -174,8 +181,18 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         hideSoftKeyboard();
     }
 
+
     private void hideSoftKeyboard(){
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        String UserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("DriverAvailable");
+        GeoFire geofire = new GeoFire(ref);
+        geofire.removeLocation(UserId);
     }
 }
 
