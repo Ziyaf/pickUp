@@ -1,34 +1,42 @@
 {
   "project_info": {
-    "project_number": "127501229084",
-    "firebase_url": "https://pickup-90bb4.firebaseio.com",
-    "project_id": "pickup-90bb4",
-    "storage_bucket": "pickup-90bb4.appspot.com"
+    "project_number": "584305059569",
+    "firebase_url": "https://pickup-d4fa0.firebaseio.com",
+    "project_id": "pickup-d4fa0",
+    "storage_bucket": "pickup-d4fa0.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:127501229084:android:3c1990ead857633a4153d9",
+        "mobilesdk_app_id": "1:584305059569:android:3d37a3f2e6938ef7212b50",
         "android_client_info": {
           "package_name": "com.example.pickup"
         }
       },
       "oauth_client": [
         {
-          "client_id": "127501229084-hcn03oo22f1bgdbcpil677smqboe4092.apps.googleusercontent.com",
+          "client_id": "584305059569-nfc3t4lv7r38vhq9t4faiah40bq1sic0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.pickup",
+            "certificate_hash": "075468ef279b6d80f5c0e30e981c51612c08b06d"
+          }
+        },
+        {
+          "client_id": "584305059569-8pvfv9bipkhged169lfpa8svf7jepd49.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAl1PKpLvriKW69OaSAPeIdWk0KsNK4Wlk"
+          "current_key": "AIzaSyCg0Wkj_WG5cvhO0WENsX4VuNZCSUUXB-E"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "127501229084-hcn03oo22f1bgdbcpil677smqboe4092.apps.googleusercontent.com",
+              "client_id": "584305059569-8pvfv9bipkhged169lfpa8svf7jepd49.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
