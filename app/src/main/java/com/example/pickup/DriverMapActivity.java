@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.nfc.Tag;
@@ -28,6 +29,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -44,6 +46,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLoctionProviderClient;
     private Marker mMarker;
+    double Latitude,Longitude;
 
 
 
@@ -85,7 +88,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         Log.d(TAG, "initMap: initializing map");
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
-        mapFragment.getMapAsync(DriverMapActivity.this);
+        mapFragment.getMapAsync(this);
     }
 
     @Override
@@ -135,33 +138,42 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         mFusedLoctionProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         try{
-            if(mLocationPermissionsGranted){
+                if (mLocationPermissionsGranted) {
 
-                final Task location =   mFusedLoctionProviderClient.getLastLocation();
-                location.addOnCompleteListener(new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if(task.isSuccessful()){
-                            Log.d(TAG, "onComplete: found location!");
-                            Location currentLocation = (Location) task.getResult();
+                    final Task location = mFusedLoctionProviderClient.getLastLocation();
+                    location.addOnCompleteListener(new OnCompleteListener() {
+                        @Override
+                        public void onComplete(@NonNull Task task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "onComplete: found location!");
+                                Location currentLocation = (Location) task.getResult();
 
-                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
-                                    DEFAULT_ZOOM,
-                                    "My Location");
-                            // Sending location to Database using geofire
+                                     Latitude = currentLocation.getLatitude();
+                                     Longitude = currentLocation.getLongitude();
 
-                            String UserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("DriverAvailable");
-                            GeoFire geofire = new GeoFire(ref);
-                            geofire.setLocation(UserId, new GeoLocation(currentLocation.getLatitude(),currentLocation.getLongitude()));
+                                    moveCamera(new LatLng(Latitude, Longitude),
+                                            DEFAULT_ZOOM,
+                                            "My Location");
+                                // Sending location to Database using geofire
 
-                        }else{
-                            Log.d(TAG, "onComplete: current location is null");
-                            Toast.makeText(DriverMapActivity.this, "unable to get current location", Toast.LENGTH_SHORT).show();
+                                String UserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("DriverAvailable");
+                                GeoFire geofire = new GeoFire(ref);
+                                geofire.setLocation(UserId, new GeoLocation(Latitude, Longitude), new GeoFire.CompletionListener() {
+                                    @Override
+                                    public void onComplete(String key, DatabaseError error) {
+                                        Log.d(TAG,"Recieved Location");
+                                    }
+                                });
+
+                            } else {
+                                Log.d(TAG, "onComplete: current location is null");
+                                Toast.makeText(DriverMapActivity.this, "unable to get current location", Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
-            }
+                    });
+                }
+
         }catch (SecurityException e){
             Log.e(TAG, "getDeviceLocation: SecurityException: " + e.getMessage() );
         }
