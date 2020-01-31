@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,9 +14,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
-
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -30,11 +26,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
-public class DriverMapActivity extends FragmentActivity implements OnMapReadyCallback {
+
+public class CustomerMapActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private static final String TAG = "DriverMapActivity";
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -48,7 +42,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
     private FusedLocationProviderClient mFusedLoctionProviderClient;
     private Marker mMarker;
     double Latitude,Longitude;
-    private Button mlogout;
+    private Button mlogout,req;
 
 
 
@@ -61,18 +55,27 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         getLocationPermision();
 
         mlogout = (Button) findViewById(R.id.logout);
+        req = (Button) findViewById(R.id.req);
+
         mlogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(DriverMapActivity.this, MainActivity.class));
+                startActivity(new Intent(CustomerMapActivity.this, MainActivity.class));
                 finish();
                 return;
             }
         });
 
+        req.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String User;
+            }
+        });
+
     }
-//Getting Map Permisions and Checking it//
+    //Getting Map Permisions and Checking it//
     private void getLocationPermision() {
         Log.d(TAG, "getLocationPermission: getting location permissions");
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
@@ -140,7 +143,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                 return;
             }
             mMap.setMyLocationEnabled(true);
-           // mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            // mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
         }
     }
@@ -151,41 +154,33 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         mFusedLoctionProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         try{
-                if (mLocationPermissionsGranted) {
+            if (mLocationPermissionsGranted) {
 
-                    final Task location = mFusedLoctionProviderClient.getLastLocation();
-                    location.addOnCompleteListener(new OnCompleteListener() {
-                        @Override
-                        public void onComplete(@NonNull Task task) {
-                            if (task.isSuccessful()) {
-                                Log.d(TAG, "onComplete: found location!");
-                                Location currentLocation = (Location) task.getResult();
-                                if(currentLocation!=null) {
-                                    Latitude = currentLocation.getLatitude();
-                                    Longitude = currentLocation.getLongitude();
-                                }
-                                moveCamera(new LatLng(Latitude, Longitude),
-                                            DEFAULT_ZOOM,
-                                            "My Location");
-                                // Sending location to Database using geofire
-
-                                String UserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("DriverAvailable");
-                                GeoFire geofire = new GeoFire(ref);
-                                geofire.setLocation(UserId, new GeoLocation(Latitude, Longitude), new GeoFire.CompletionListener() {
-                                    @Override
-                                    public void onComplete(String key, DatabaseError error) {
-                                        Log.d(TAG,"Recieved Location");
-                                    }
-                                });
-
-                            } else {
-                                Log.d(TAG, "onComplete: current location is null");
-                                Toast.makeText(DriverMapActivity.this, "unable to get current location", Toast.LENGTH_SHORT).show();
+                final Task location = mFusedLoctionProviderClient.getLastLocation();
+                location.addOnCompleteListener(new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "onComplete: found location!");
+                            Location currentLocation = (Location) task.getResult();
+                            if(currentLocation==null) {
+                                Latitude = currentLocation.getLatitude();
+                                Longitude = currentLocation.getLongitude();
                             }
+                            moveCamera(new LatLng(Latitude, Longitude),
+                                    DEFAULT_ZOOM,
+                                    "My Location");
+                            // Sending location to Database using geofire
+
+
+
+                        } else {
+                            Log.d(TAG, "onComplete: current location is null");
+                            Toast.makeText(CustomerMapActivity.this, "unable to get current location", Toast.LENGTH_SHORT).show();
                         }
-                    });
-                }
+                    }
+                });
+            }
 
         }catch (SecurityException e){
             Log.e(TAG, "getDeviceLocation: SecurityException: " + e.getMessage() );
@@ -214,10 +209,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
     @Override
     protected void onStop() {
         super.onStop();
-        String UserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("DriverAvailable");
-        GeoFire geofire = new GeoFire(ref);
-        geofire.removeLocation(UserId);
+
     }
 }
 
