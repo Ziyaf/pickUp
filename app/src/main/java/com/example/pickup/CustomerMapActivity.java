@@ -14,6 +14,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,6 +29,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 public class CustomerMapActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -43,6 +48,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
     private Marker mMarker;
     double Latitude,Longitude;
     private Button mlogout,req;
+    private LatLng pickup;
 
 
 
@@ -70,7 +76,14 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         req.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String User;
+                String UserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Customer request");
+                GeoFire geofire = new GeoFire(ref);
+                geofire.setLocation(UserId, new GeoLocation(Latitude,Longitude));
+                pickup = new LatLng(Latitude,Longitude);
+                mMap.addMarker(new MarkerOptions().position(pickup).title("Make pickup here"));
+                req.setText("Getting Your Driver");
             }
         });
 
@@ -163,7 +176,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                         if (task.isSuccessful()) {
                             Log.d(TAG, "onComplete: found location!");
                             Location currentLocation = (Location) task.getResult();
-                            if(currentLocation==null) {
+                            if(currentLocation!=null) {
                                 Latitude = currentLocation.getLatitude();
                                 Longitude = currentLocation.getLongitude();
                             }
