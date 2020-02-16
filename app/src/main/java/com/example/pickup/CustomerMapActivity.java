@@ -18,6 +18,9 @@ import android.widget.Toast;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryDataEventListener;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -31,6 +34,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -95,6 +99,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                 pickup = new LatLng(Latitude,Longitude);
                 mMap.addMarker(new MarkerOptions().position(pickup).title("Make pickup here"));
                 req.setText("Getting Your Driver");
+                getClosestDriver();
             }
         });
 
@@ -235,6 +240,51 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
 
     private void hideSoftKeyboard(){
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+    }
+
+    private  int radius = 1;
+    private boolean driveFound = false;
+    private String driverId;
+    private void getClosestDriver(){
+        DatabaseReference driverLocation = FirebaseDatabase.getInstance().getReference().child("DriverAvailable");
+
+        GeoFire geoFire = new GeoFire(driverLocation);
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(pickup.latitude,pickup.longitude),radius);
+        geoQuery.removeAllListeners();
+
+       geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+           @Override
+           public void onKeyEntered(String key, GeoLocation location) {
+               if (!driveFound){
+                   driveFound = true;
+                   driverId = key;
+               }
+           }
+
+           @Override
+           public void onKeyExited(String key) {
+
+           }
+
+           @Override
+           public void onKeyMoved(String key, GeoLocation location) {
+
+           }
+
+           @Override
+           public void onGeoQueryReady() {
+               if (!driveFound){
+                   radius++;
+                   getClosestDriver();
+               }
+
+           }
+
+           @Override
+           public void onGeoQueryError(DatabaseError error) {
+
+           }
+       });
     }
 
     @Override
