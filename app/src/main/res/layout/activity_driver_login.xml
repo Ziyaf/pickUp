@@ -62,7 +62,9 @@
         android:text="@string/login"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout2"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/button_rounded_login"/>
 
     <Button
         android:id="@+id/signup"
@@ -72,7 +74,9 @@
         android:text="@string/signup"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/login" />
+        app:layout_constraintTop_toBottomOf="@+id/login"
+        android:background="@drawable/button_rounded_login"
+        android:textColor="#FFFFFF"/>
 
     <ImageView
         android:id="@+id/imageView"
