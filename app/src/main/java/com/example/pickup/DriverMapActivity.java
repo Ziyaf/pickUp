@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.firebase.geofire.GeoFire;
@@ -60,6 +62,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
     LocationRequest mLocationRequest;
     private String CustomerId = "";
     private Float rideDistance;
+    private Switch rdy;
 
 
 
@@ -73,6 +76,34 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         getLocationPermision();
         mFusedLoctionProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
+        rdy = (Switch) findViewById(R.id.rdy);
+        rdy.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    String UserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("DriverAvailable").child(UserId);
+                    GeoFire geoFire = new GeoFire(ref);
+                    geoFire.setLocation(UserId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), new GeoFire.CompletionListener() {
+                        @Override
+                        public void onComplete(String key, DatabaseError error) {
+                            return;
+                        }
+                    });
+                }
+                else{
+                    String UserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("DriverAvailable");
+                    GeoFire geofire = new GeoFire(ref);
+                    geofire.removeLocation(UserId, new GeoFire.CompletionListener() {
+                        @Override
+                        public void onComplete(String key, DatabaseError error) {
+                            return;
+                        }
+                    });
+                }
+            }
+        });
         mlogout = (Button) findViewById(R.id.logout);
         mlogout.setOnClickListener(new View.OnClickListener() {
             @Override
