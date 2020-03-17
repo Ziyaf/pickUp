@@ -24,6 +24,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/req"
         android:layout_gravity="bottom"
-        android:text="Make Pickup"/>
+        android:text="@string/make_pickup"/>
 
 </FrameLayout>

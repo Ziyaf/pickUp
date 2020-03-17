@@ -235,32 +235,32 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                     mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
 
                     String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("driversAvailable");
-                    DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference("driversWorking");
+                    DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("DriverAvailable");
+                    DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference("DriverWorking");
                     GeoFire geoFireAvailable = new GeoFire(refAvailable);
                     GeoFire geoFireWorking = new GeoFire(refWorking);
 
-                    switch (CustomerId){
-                        case "":
-                            geoFireWorking.removeLocation(userId);
-                            geoFireAvailable.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
-                                @Override
-                                public void onComplete(String key, DatabaseError error) {
-
-                                }
-                            });
-                            break;
-
-                        default:
-                            geoFireAvailable.removeLocation(userId);
-                            geoFireWorking.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
-                                @Override
-                                public void onComplete(String key, DatabaseError error) {
-
-                                }
-                            });
-                            break;
-                    }
+//                    switch (CustomerId){
+//                        case "":
+//                            geoFireWorking.removeLocation(userId);
+//                            geoFireAvailable.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
+//                                @Override
+//                                public void onComplete(String key, DatabaseError error) {
+//
+//                                }
+//                            });
+//                            break;
+//
+//                        default:
+//                            geoFireAvailable.removeLocation(userId);
+//                            geoFireWorking.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
+//                                @Override
+//                                public void onComplete(String key, DatabaseError error) {
+//
+//                                }
+//                            });
+//                            break;
+//                    }
                 }
 
             }
@@ -301,6 +301,20 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
     private void hideSoftKeyboard(){
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
+
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        String UserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+//        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("DriverAvailable");
+//        GeoFire geoFire = new GeoFire(ref);
+//        geoFire.setLocation(UserId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), new GeoFire.CompletionListener() {
+//            @Override
+//            public void onComplete(String key, DatabaseError error) {
+//
+//            }
+//        });
+//    }
 
     @Override
     protected void onStop() {
