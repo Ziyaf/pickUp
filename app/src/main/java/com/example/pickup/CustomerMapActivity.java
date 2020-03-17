@@ -248,7 +248,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
     }
 
     private  int radius = 1;
-    private boolean driveFound = false;
+    private boolean driverFound = false;
     private String driverFoundId;
     private void getClosestDriver(){
         DatabaseReference driverLocation = FirebaseDatabase.getInstance().getReference().child("DriverAvailable");
@@ -260,8 +260,8 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
            @Override
            public void onKeyEntered(String key, GeoLocation location) {
-               if (!driveFound){
-                   driveFound = true;
+               if (!driverFound){
+                   driverFound = true;
                    driverFoundId = key;
                }
 
@@ -287,7 +287,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
 
            @Override
            public void onGeoQueryReady() {
-               if (!driveFound){
+               if (!driverFound){
                    radius++;
                    getClosestDriver();
                }

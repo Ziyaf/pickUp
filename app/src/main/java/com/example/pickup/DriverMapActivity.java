@@ -82,7 +82,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
                     String UserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("DriverAvailable").child(UserId);
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("DriverAvailable");
                     GeoFire geoFire = new GeoFire(ref);
                     geoFire.setLocation(UserId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), new GeoFire.CompletionListener() {
                         @Override
@@ -259,8 +259,6 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                 if(getApplicationContext()!=null){
                     if (location != null)
                         mLastLocation = location;
-
-
                     LatLng latLng = new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude());
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                     mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
@@ -347,13 +345,20 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
 //        });
 //    }
 
+
+
     @Override
     protected void onStop() {
         super.onStop();
         String UserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("DriverAvailable");
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("DriverAvailable");
         GeoFire geofire = new GeoFire(ref);
-        geofire.removeLocation(UserId);
+        geofire.removeLocation(UserId, new GeoFire.CompletionListener() {
+            @Override
+            public void onComplete(String key, DatabaseError error) {
+                return;
+            }
+        });
     }
 }
 
