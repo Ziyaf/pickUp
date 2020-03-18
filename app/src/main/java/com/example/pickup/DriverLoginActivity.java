@@ -53,7 +53,7 @@ public class DriverLoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                final String Email = email.getText().toString(),
                         Password = password.getText().toString();
-               mAuth.signInWithEmailAndPassword(Email,Password).addOnCompleteListener(DriverLoginActivity.this, new OnCompleteListener<AuthResult>() {
+               mAuth.signInWithEmailAndPassword(Email.replace('.',','),Password).addOnCompleteListener(DriverLoginActivity.this, new OnCompleteListener<AuthResult>() {
                    @Override
                    public void onComplete(@NonNull Task<AuthResult> task) {
                        if (!task.isSuccessful()){
@@ -70,7 +70,7 @@ public class DriverLoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final String Email = email.getText().toString(),
                         Password = password.getText().toString();
-                mAuth.createUserWithEmailAndPassword(Email,Password).addOnCompleteListener(DriverLoginActivity.this, new OnCompleteListener<AuthResult>() {
+                mAuth.createUserWithEmailAndPassword(Email.replace('.',','),Password).addOnCompleteListener(DriverLoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (!task.isSuccessful()){

@@ -121,12 +121,13 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
     void getAssignedCustomer(){
 
         String driverId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance().getReference().child("user").child("driver").child(driverId).child("customerRequest").child("customerRideId");
+        DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance().getReference().child("user").child("driver").child(driverId);//.child("customerRequest").child("customerRideId");
         assignedCustomerRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
                     CustomerId = dataSnapshot.getValue().toString();
+                    CustomerId=CustomerId.replace('.',',');
                     getAssignedCustomerPickupLocation();
                     //getAssignedCustomerDestination();
                    // getAssignedCustomerInfo();
@@ -147,7 +148,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         assignedCustomerPickupLocationRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists() && !CustomerId.equals("")){
+                if(dataSnapshot.exists()){
                     List<Object> map = (List<Object>) dataSnapshot.getValue();
                     double locationLat = 0;
                     double locationLng = 0;
@@ -271,7 +272,12 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
 
 //                    switch (CustomerId){
 //                        case "":
-//                            geoFireWorking.removeLocation(userId);
+//                            geoFireWorking.removeLocation(userId, new GeoFire.CompletionListener() {
+//                                @Override
+//                                public void onComplete(String key, DatabaseError error) {
+//                                    return;
+//                                }
+//                            });
 //                            geoFireAvailable.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
 //                                @Override
 //                                public void onComplete(String key, DatabaseError error) {
@@ -281,7 +287,12 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
 //                            break;
 //
 //                        default:
-//                            geoFireAvailable.removeLocation(userId);
+//                            geoFireAvailable.removeLocation(userId, new GeoFire.CompletionListener() {
+//                                @Override
+//                                public void onComplete(String key, DatabaseError error) {
+//                                    return;
+//                                }
+//                            });
 //                            geoFireWorking.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
 //                                @Override
 //                                public void onComplete(String key, DatabaseError error) {
@@ -290,9 +301,9 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
 //                            });
 //                            break;
 //                    }
-                }
-
-            }
+//                }
+//
+//            }
         }
     };
 
@@ -346,20 +357,19 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
 //    }
 
 
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        String UserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("DriverAvailable");
-        GeoFire geofire = new GeoFire(ref);
-        geofire.removeLocation(UserId, new GeoFire.CompletionListener() {
-            @Override
-            public void onComplete(String key, DatabaseError error) {
-                return;
-            }
-        });
-    }
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        String UserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+//        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("DriverAvailable");
+//        GeoFire geofire = new GeoFire(ref);
+//        geofire.removeLocation(UserId, new GeoFire.CompletionListener() {
+//            @Override
+//            public void onComplete(String key, DatabaseError error) {
+//                return;
+//            }
+//        });
+//    }
 }
 
 
