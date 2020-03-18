@@ -270,40 +270,40 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                     GeoFire geoFireAvailable = new GeoFire(refAvailable);
                     GeoFire geoFireWorking = new GeoFire(refWorking);
 
-//                    switch (CustomerId){
-//                        case "":
-//                            geoFireWorking.removeLocation(userId, new GeoFire.CompletionListener() {
-//                                @Override
-//                                public void onComplete(String key, DatabaseError error) {
-//                                    return;
-//                                }
-//                            });
-//                            geoFireAvailable.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
-//                                @Override
-//                                public void onComplete(String key, DatabaseError error) {
-//
-//                                }
-//                            });
-//                            break;
-//
-//                        default:
-//                            geoFireAvailable.removeLocation(userId, new GeoFire.CompletionListener() {
-//                                @Override
-//                                public void onComplete(String key, DatabaseError error) {
-//                                    return;
-//                                }
-//                            });
-//                            geoFireWorking.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
-//                                @Override
-//                                public void onComplete(String key, DatabaseError error) {
-//
-//                                }
-//                            });
-//                            break;
-//                    }
-//                }
-//
-//            }
+                    switch (CustomerId){
+                        case "":
+                            geoFireWorking.removeLocation(userId, new GeoFire.CompletionListener() {
+                                @Override
+                                public void onComplete(String key, DatabaseError error) {
+                                    return;
+                                }
+                            });
+                            geoFireAvailable.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
+                                @Override
+                                public void onComplete(String key, DatabaseError error) {
+
+                                }
+                            });
+                            break;
+
+                        default:
+                            geoFireAvailable.removeLocation(userId, new GeoFire.CompletionListener() {
+                                @Override
+                                public void onComplete(String key, DatabaseError error) {
+                                    return;
+                                }
+                            });
+                            geoFireWorking.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
+                                @Override
+                                public void onComplete(String key, DatabaseError error) {
+
+                                }
+                            });
+                            break;
+                    }
+                }
+
+            }
         }
     };
 
